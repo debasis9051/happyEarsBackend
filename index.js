@@ -1,26 +1,30 @@
 const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
 const app = express();
-const port = 3000;
+dotenv.config()
 
+const port = process.env.port || 3001;
 
+app.use(cors({
+    origin: ['http://localhost:3000'],
+    methods: 'GET, POST',
+    credentials: true
+}));
 
-var admin = require("firebase-admin");
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
 
-var serviceAccount = require("path/to/serviceAccountKey.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-
-
-
-//const analytics = getAnalytics(app);
+// app.use(admin)
 
 app.get('/', (req, res) => {
-  res.send('Hello from HappyEars backend');
+    res.send('Hello from HappyEars backend');
 });
 
 app.listen(port, () => {
-  console.log("Server is running on http://localhost:" + port);
+    console.log("Server is running on http://localhost:" + port);
 });
+
+app.use(require("./routes/userRoutes"))
