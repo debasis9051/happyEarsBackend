@@ -1,25 +1,14 @@
 const User = require('../models/userModel');
-const admin = require('firebase-admin')
-const serviceAccount = require("../happy-ears-service-config.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
 
 const userController = {
-    signup: async (req, res) => {
+    createUser: async (req, res) => {
         try {
+            let t = await User.get(req.body.user_uid)
+            if(t == null){
+                await User.create(req.body.user_uid, req.body.user_name, req.body.user_email, req.body.user_photo)            
+            }
 
-            res.status(402).json({ operation: "success", message: "signup success" });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
-        }
-    },
-    logout: async (req, res) => {
-        try {
-
-            res.status(402).json({ operation: "success", message: "log out success" });
+            res.status(200).json({ operation: "success", message: "create user success" });
         } catch (error) {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
