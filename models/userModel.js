@@ -1,9 +1,11 @@
-const admin = require('firebase-admin')
-const serviceAccount = require("../happy-ears-service-config.json");
+// const admin = require('firebase-admin')
+// const serviceAccount = require("../happy-ears-service-config.json");
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount)
+// });
+
+const admin = require("../firebaseAdmin")
 
 class User {
     static async create(user_uid, user_name, user_email, user_photo) {
