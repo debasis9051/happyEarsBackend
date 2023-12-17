@@ -64,6 +64,14 @@ class Product {
         let qs = await q.get()
         return qs.docs.map(doc => doc.data())
     }
+
+    static async get_product_list_by_pagination(product_name) {
+        console.log("getting product by name")
+
+        let q = admin.firestore().collection('products').where("product_name", "==", product_name)
+        let qs = await q.get()
+        return qs.docs.map(doc => doc.data())
+    }
 }
 
 module.exports = Product;

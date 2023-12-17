@@ -25,6 +25,17 @@ const productController = {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
         }
+    },
+
+    getProductList: async (req, res) => {
+        try {            
+            let p_data = await Product.get_product_list_by_pagination()
+
+            res.status(200).json({ operation: "success", message: "Product list fetched successfully", info: p_data });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
     }
 };
 
