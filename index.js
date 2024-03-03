@@ -5,10 +5,10 @@ const cors = require('cors');
 dotenv.config()
 
 const app = express();
-const port = process.env.port || 3001;
+const port = process.env.port || 4001;
 
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: [process.env.frontend_origin],
     methods: 'GET, POST',
     credentials: true
 }));
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("Server is running on http://localhost:" + port);
+    console.log("Server is running on " + port);
 });
 
 app.use(require("./routes/userRoutes"))
