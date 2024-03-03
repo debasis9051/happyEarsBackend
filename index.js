@@ -1,7 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 
 dotenv.config()
 
@@ -14,8 +13,8 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
     res.send('Hello from HappyEars backend');
