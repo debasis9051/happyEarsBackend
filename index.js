@@ -7,8 +7,10 @@ dotenv.config()
 const app = express();
 const port = process.env.port || 4001;
 
+const frontendOrigins = process.env.frontend_origin.split(',');
+
 app.use(cors({
-    origin: [process.env.frontend_origin],
+    origin: frontendOrigins,
     methods: 'GET, POST',
     credentials: true
 }));
