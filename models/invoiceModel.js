@@ -50,6 +50,7 @@ class Invoice {
             invoice_number: body_data.invoice_number,
             date: new Date(body_data.date),
             mode_of_payment: body_data.mode_of_payment,
+            salesperson_id: body_data.salesperson_id,
             discount_amount: body_data.discount_amount,
             line_items: body_data.line_items,
             accessory_items: body_data.accessory_items,
@@ -71,6 +72,7 @@ class Invoice {
             contact_number: body_data.contact_number,
             date: new Date(body_data.date),
             mode_of_payment: body_data.mode_of_payment,
+            salesperson_id: body_data.salesperson_id,
             discount_amount: body_data.discount_amount,
             accessory_items: body_data.accessory_items
         });

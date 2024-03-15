@@ -14,6 +14,33 @@ const productController = {
         }
     },
 
+    addProduct: async (req, res) => {
+        try {            
+            let data = [
+                {
+                    product_name: req.body.product_name,
+                    manufacturer_name: req.body.manufacturer,
+                    mrp: req.body.mrp,
+                    serial_number: req.body.serial_number,
+                    branch_id: req.body.branch_id
+                }
+            ]
+            
+            let t1 = await Product.are_serials_in_stock([req.body.serial_number])
+            if (t1.length > 0) {
+                return res.status(200).json({ operation: "failed", message: `Product with Serial: ${req.body.serial_number} already exists in database` });
+            }
+
+            await Product.add_batch_products_with_logs(data, req.body.current_user_uid, req.body.current_user_name, "add", "product added")
+ 
+            return res.status(200).json({ operation: "success", message: "Product added successfully" });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
     importProducts: async (req, res) => {
         try {
             let b_list = await Branch.get_branch_list()
