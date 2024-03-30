@@ -51,8 +51,10 @@ const productController = {
             let data = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) //full data extracted
             data.splice(0, 1) //heading column remove
             data = data.slice(parseInt(req.body.starting_row) - 1, parseInt(req.body.ending_row)) //taking segment from start row to end row
+
             data = data.filter((x) => x[3] !== undefined) //empty serial entries remove
             data = data.filter((x) => ((!x[6].toLowerCase().includes("trial")) && ((x[6].toLowerCase().includes("ranikuthi")) || (x[6].toLowerCase().includes("rajpur"))) ) ) //branch name keyword not found and "trial" keyword entries remove
+            //remove duplicate serials from "data"
 
             data = data.map((x) => {          // structuring data
                 let b = null
@@ -71,7 +73,7 @@ const productController = {
                 }
             })
 
-            let t1 = await Product.are_serials_in_stock(data.map(x => x.serial_number))
+            let t1 = await Product.are_serials_in_stock(data.map(x => x.serial_number))     //existing serials in database filtered out
             if (t1.length > 0) {
                 data = data.filter(x => !t1.find(y => y.serial_number === x.serial_number))
             } 

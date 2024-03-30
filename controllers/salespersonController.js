@@ -2,7 +2,7 @@ const Salesperson = require('../models/salespersonModel')
 
 const salespersonController = {
     getSalespersonList: async (req, res) => {
-        try {
+        try { Salesperson.test()
             let p_data = await Salesperson.get_salesperson_list()
 
             res.status(200).json({ operation: "success", message: "Salesperson list fetched successfully", info: p_data });
