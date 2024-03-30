@@ -14,14 +14,16 @@ const invoiceController = {
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
         }
     },
-
+    
     getInvoiceNumber: async (req, res) => {
         try {
+            if (!moment(req.body.date).isValid()) {
+                return res.status(200).json({ operation: "failed", message: "Given date is Invalid " });
+            }
+            
             let c = await Invoice.get_invoice_count_by_branch_id_and_date(req.body.branch_id, req.body.date)
             let b = await Branch.get_branch_invoice_code_by_id(req.body.branch_id)
-            let t = moment(req.body.date).format("MMM").toUpperCase() + "/HA/" + b + "/" + (c + 1)
-
-            console.log(t)
+            let t = moment(req.body.date).format("MMM/YY").toUpperCase() + "/HA/" + b + "/" + (c + 1)
 
             res.status(200).json({ operation: "success", message: "Invoice number fetched successfully", info: t });
         } catch (error) {

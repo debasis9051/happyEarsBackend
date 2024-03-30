@@ -1,18 +1,19 @@
 const admin = require("../firebaseAdmin")
 
+const moment = require("moment")
+
 class Invoice {
     static async get_invoice_count_by_branch_id_and_date(branch_id, date) {
         // console.log("get invoice count by branch id and date")
 
-        let d = new Date()
-        // let d = new Date(date)
-        let f = new Date(d.getFullYear(), d.getMonth(), 1)
-        let l = new Date(d.getFullYear(), d.getMonth() + 1, 0)
+        let f = new Date(moment(date).startOf("month").format("YYYY-MM-DD"))
+        let l = new Date(moment(date).endOf("month").format("YYYY-MM-DD"))
 
         let q = admin.firestore().collection('invoices').where("date", ">=", f).where("date", "<=", l)
         let qs = await q.get()
         let t = qs.docs.map(doc => doc.data())
         t = t.filter(x => x.branch_id === branch_id)
+
         return t.length
     }
 
