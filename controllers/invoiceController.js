@@ -17,9 +17,11 @@ const invoiceController = {
 
     getInvoiceNumber: async (req, res) => {
         try {
-            let c = await Invoice.get_current_invoice_count_by_branch_id(req.body.branch_id)
+            let c = await Invoice.get_invoice_count_by_branch_id_and_date(req.body.branch_id, req.body.date)
             let b = await Branch.get_branch_invoice_code_by_id(req.body.branch_id)
-            let t = moment().format("MMM").toUpperCase() + "/HA/" + b + "/" + (c + 1)
+            let t = moment(req.body.date).format("MMM").toUpperCase() + "/HA/" + b + "/" + (c + 1)
+
+            console.log(t)
 
             res.status(200).json({ operation: "success", message: "Invoice number fetched successfully", info: t });
         } catch (error) {
