@@ -27,15 +27,15 @@ class Salesperson {
     static async test() {
         console.log('custom script')
 
-        let salesperson_ref = await admin.firestore().collection('salespersons').add({
-            salesperson_name: body_data.salesperson_name,
+        // let salesperson_ref = await admin.firestore().collection('salespersons').add({
+        //     salesperson_name: body_data.salesperson_name,
 
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-            added_by_user_uid: current_user_uid,
-            added_by_user_name: current_user_name,
-        });
+        //     created_at: admin.firestore.FieldValue.serverTimestamp(),
+        //     added_by_user_uid: current_user_uid,
+        //     added_by_user_name: current_user_name,
+        // });
 
-        return salesperson_ref
+        // return salesperson_ref
     }
 }
 
