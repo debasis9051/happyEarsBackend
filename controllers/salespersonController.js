@@ -24,9 +24,9 @@ const salespersonController = {
         }
     },
 
-    testRoute: async (req, res) => {
+    customScript: async (req, res) => {
         try {
-            await Salesperson.test()
+            await Salesperson.script()
 
             return res.status(200).json({ operation: "success", message: "Script executed successfully" });
 

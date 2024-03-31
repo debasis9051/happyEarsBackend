@@ -7,10 +7,10 @@ class Salesperson {
 
         let q = admin.firestore().collection('salespersons').orderBy("salesperson_name")
         let qs = await q.get()
-        return qs.docs.map(doc => ({id: doc.id, ...(doc.data())}))
+        return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
 
-    static async add_salesperson(current_user_uid,current_user_name,body_data) {
+    static async add_salesperson(current_user_uid, current_user_name, body_data) {
         console.log('adding salesperson')
 
         let salesperson_ref = await admin.firestore().collection('salespersons').add({
@@ -24,18 +24,46 @@ class Salesperson {
         return salesperson_ref
     }
 
-    static async test() {
+    static async script() {
         console.log('custom script')
 
-        // let salesperson_ref = await admin.firestore().collection('salespersons').add({
-        //     salesperson_name: body_data.salesperson_name,
+        let qs1 = await admin.firestore().collection('products').orderBy("product_name").get()
+        let full_product_list = qs1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
 
-        //     created_at: admin.firestore.FieldValue.serverTimestamp(),
-        //     added_by_user_uid: current_user_uid,
-        //     added_by_user_name: current_user_name,
-        // });
+        let qs2 = await admin.firestore().collection('product_logs').orderBy("product_name").get()
+        let full_product_logs_list = qs2.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
 
-        // return salesperson_ref
+
+
+
+        let t1 = full_product_list.map(x => x.serial_number) // full product list with dulicates
+
+        let t2 = Array.from(new Set(full_product_list.map(x => x.serial_number))) // full product list without duplicates
+
+        let t3 = t1.filter((x, i) => t1.indexOf(x) !== i)
+        console.log("duplicates", t3.length, t3)
+
+        // const batch = admin.firestore().batch()
+
+        // t3.forEach(x => {
+        //     let dps = full_product_list.filter(y => y.serial_number === x)
+
+        //     let delete_doc = dps.find(y => y.instock === true)
+        //     console.log(dps.map(y => ({ id: y.id, product_name: y.product_name, serial_number: y.serial_number, instock: y.instock })), delete_doc.id)
+
+        //     let delete_doc_logs = full_product_logs_list.filter(y=>y.product_id === delete_doc.id)
+        //     console.log(delete_doc_logs)
+
+        //     // const pdocRef = admin.firestore().collection('products').doc(delete_doc.id);
+        //     // batch.delete(pdocRef)
+            
+        //     // delete_doc_logs.forEach(y=>{
+        //     //     const pldocRef = admin.firestore().collection('product_logs').doc(y.id);
+        //     //     batch.delete(pldocRef)
+        //     // })
+        // })
+
+        // await batch.commit()
     }
 }
 
