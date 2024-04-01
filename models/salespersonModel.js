@@ -1,5 +1,7 @@
 const admin = require("../firebaseAdmin")
 
+const moment = require("moment")
+
 class Salesperson {
 
     static async get_salesperson_list() {
@@ -27,21 +29,20 @@ class Salesperson {
     static async script() {
         console.log('custom script')
 
-        let qs1 = await admin.firestore().collection('products').orderBy("product_name").get()
-        let full_product_list = qs1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+        /////////////////////////////////// Duplicate product and logs remove////////////////////////////
+        // let qs1 = await admin.firestore().collection('products').orderBy("product_name").get()
+        // let full_product_list = qs1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
 
-        let qs2 = await admin.firestore().collection('product_logs').orderBy("product_name").get()
-        let full_product_logs_list = qs2.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+        // let qs2 = await admin.firestore().collection('product_logs').orderBy("product_name").get()
+        // let full_product_logs_list = qs2.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
 
 
+        // let t1 = full_product_list.map(x => x.serial_number) // full product list with dulicates
 
+        // let t2 = Array.from(new Set(full_product_list.map(x => x.serial_number))) // full product list without duplicates
 
-        let t1 = full_product_list.map(x => x.serial_number) // full product list with dulicates
-
-        let t2 = Array.from(new Set(full_product_list.map(x => x.serial_number))) // full product list without duplicates
-
-        let t3 = t1.filter((x, i) => t1.indexOf(x) !== i)
-        console.log("duplicates", t3.length, t3)
+        // let t3 = t1.filter((x, i) => t1.indexOf(x) !== i)
+        // console.log("duplicates", t3.length, t3)
 
         // const batch = admin.firestore().batch()
 
@@ -62,6 +63,30 @@ class Salesperson {
         //     //     batch.delete(pldocRef)
         //     // })
         // })
+
+        // await batch.commit()
+
+
+
+        //////////////////////////////////////Invoice number update/////////////////////////////////////
+        let qs1 = await admin.firestore().collection('invoices').orderBy("invoice_number").get()
+        let full_invoice_list = qs1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+
+        let t1 = full_invoice_list.filter(x => /(?:[^\/]*\/){3}[^\/]*/gm.test(x.invoice_number))
+
+        // const batch = admin.firestore().batch()
+
+        t1.forEach(inv_doc => {
+            
+            let new_inv_no = inv_doc.invoice_number.split("/")
+            new_inv_no.splice(1,0,moment.unix(inv_doc.date._seconds).format("YY"))
+            new_inv_no = new_inv_no.join("/")
+
+            console.log(inv_doc, new_inv_no)
+
+            // const idocRef = admin.firestore().collection('invoices').doc(inv_doc.id);
+            // batch.update(idocRef, { invoice_number: new_inv_no });
+        })
 
         // await batch.commit()
     }
