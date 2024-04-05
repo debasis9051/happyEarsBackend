@@ -62,6 +62,10 @@ const invoiceController = {
             if (!t) {
                 return res.status(200).json({ operation: "failed", message: "No such Invoice exists" });
             }
+            // let t = await Invoice.get_invoice_by_invoice_number(req.body.invoice_number)
+            // if (t.length > 0) {
+            //     return res.status(200).json({ operation: "failed", message: "Invoice against given Invoice Number already exists" });
+            // }
 
             await Invoice.update_invoice(req.body)
 
