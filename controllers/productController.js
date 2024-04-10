@@ -91,7 +91,7 @@ const productController = {
                 data = data.filter(x => !t1.find(y => y.serial_number === x.serial_number))
             }
 
-            // await Product.add_batch_products_with_logs(data, req.body.current_user_uid, req.body.current_user_name, "import", "product added")
+            await Product.add_batch_products_with_logs(data, req.body.current_user_uid, req.body.current_user_name, "import", "product added")
 
             return res.status(200).json({ operation: "success", message: "Products imported successfully", info: [{cause: "MRP not provided", serials: rejected_mrp_serials}, {cause: "Serials already exist in database", serials: t1.map(x => x.serial_number)}] });
 
