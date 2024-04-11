@@ -49,51 +49,80 @@ const productController = {
             let worksheet = workbook.Sheets[workbook.SheetNames[0]]
 
             let data = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) //full data extracted
-            data.splice(0, 1) //heading column remove
+
+            let h = data.splice(0, 1)[0]    //heading row extracted and cut off from data
+            if(!(h.includes("COMPANY NAME") && h.includes("PRODUCT NAME") && h.includes("SERIAL NUMBER") && h.includes("MRP") && h.includes("BRANCH"))){
+                return res.status(200).json({ operation: "failed", message: 'Invalid Excel File Data' });
+            }
+            
+            let cn_col = h.findIndex(x=>x==="COMPANY NAME")
+            let pn_col = h.findIndex(x=>x==="PRODUCT NAME")
+            let sn_col = h.findIndex(x=>x==="SERIAL NUMBER")
+            let mrp_col = h.findIndex(x=>x==="MRP")
+            let br_col = h.findIndex(x=>x==="BRANCH")
+
             data = data.slice(parseInt(req.body.starting_row) - 1, parseInt(req.body.ending_row)) //taking segment from start row to end row
 
-            let rejected_mrp_serials = []
+            let rejected_serials = []
 
-            // console.log("before", data)
+            data = data.filter((x, i) => {         //remove if any of the following is empty: company name, product name, serial number, mrp, branch 
+                if (!(x[cn_col] && x[pn_col] && x[sn_col] && x[mrp_col] && x[br_col])) {
+                    if (!x[sn_col]) {
+                        rejected_serials.push(`PRODUCT ON ROW ${i + 2}`)
+                    }
+                    else {
+                        rejected_serials.push(x[sn_col].toString())
+                    }
+                }
+                return (x[cn_col] && x[pn_col] && x[sn_col] && x[mrp_col] && x[br_col])
+            })
 
-            data = data.filter((x) => x[3] !== undefined) //empty serial entries remove
-            data = data.filter((x) => { if(!x[5]){rejected_mrp_serials.push(x[3].toString())} return x[5] !== undefined}) //empty mrp entries remove
-            data = data.filter((x) => ((!x[6].toLowerCase().includes("trial")) && ((x[6].toLowerCase().includes("ranikuthi")) || (x[6].toLowerCase().includes("rajpur"))))) //branch name keyword not found and "trial" keyword entries remove
             data = data.reduce((p, o) => {      //remove duplicate serials from "data"
-                if (p.find(x => x[3] === o[3])) {
+                if (p.find(x => x[sn_col] === o[sn_col])) {
                     return p
                 } else {
                     return [...p, o]
                 }
             }, [])
 
-            // console.log("after", data)
+            data = data.filter((x) => {         //branch name keyword("ranikuthi", "rajpur") not found and "trial" keyword entries remove
+                if (!((!x[br_col].toLowerCase().includes("trial")) && (x[br_col].toLowerCase().includes("ranikuthi") || x[br_col].toLowerCase().includes("rajpur")))) {
+                    rejected_serials.push(x[sn_col].toString())
+                }
+                return ( (!x[br_col].toLowerCase().includes("trial")) && (x[br_col].toLowerCase().includes("ranikuthi") || x[br_col].toLowerCase().includes("rajpur")) )
+            })
+
 
             data = data.map((x) => {          // structuring data
                 let b = null
                 b_list.forEach(br => {
-                    if (x[6].toLowerCase().includes(br.branch_name.toLowerCase())) {
+                    if (x[br_col].toLowerCase().includes(br.branch_name.toLowerCase())) {
                         b = br.id
                     }
                 })
 
                 return {
-                    product_name: x[2].toString(),
-                    manufacturer_name: x[1].toString(),
-                    mrp: parseFloat(x[5]),
-                    serial_number: x[3].toString(),
+                    product_name: x[pn_col].toString(),
+                    manufacturer_name: x[cn_col].toString(),
+                    mrp: parseFloat(x[mrp_col]),
+                    serial_number: x[sn_col].toString(),
                     branch_id: b
                 }
             })
 
             let t1 = await Product.are_serials_in_stock(data.map(x => x.serial_number))     //existing serials in database filtered out
             if (t1.length > 0) {
-                data = data.filter(x => !t1.find(y => y.serial_number === x.serial_number))
+                data = data.filter(x => {
+                    if (t1.find(y => y.serial_number === x.serial_number)) {
+                        rejected_serials.push(x.serial_number)
+                    }
+                    return !t1.find(y => y.serial_number === x.serial_number)
+                })
             }
 
             await Product.add_batch_products_with_logs(data, req.body.current_user_uid, req.body.current_user_name, "import", "product added")
 
-            return res.status(200).json({ operation: "success", message: "Products imported successfully", info: [{cause: "MRP not provided", serials: rejected_mrp_serials}, {cause: "Serials already exist in database", serials: t1.map(x => x.serial_number)}] });
+            return res.status(200).json({ operation: "success", message: "Products imported successfully", info: { added_serials: data.map(x=>x.serial_number), rejected_serials: rejected_serials } });
 
         } catch (error) {
             console.error(error);
