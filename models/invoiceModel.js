@@ -36,7 +36,7 @@ class Invoice {
     static async get_invoice_list() {
         // console.log("getting invoice list")
 
-        let q = admin.firestore().collection('invoices').orderBy("invoice_number")
+        let q = admin.firestore().collection('invoices').orderBy("date","desc")
         let qs = await q.get()
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
