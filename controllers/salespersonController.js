@@ -23,18 +23,6 @@ const salespersonController = {
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
         }
     },
-
-    customScript: async (req, res) => {
-        try {
-            await Salesperson.script()
-
-            return res.status(200).json({ operation: "success", message: "Script executed successfully" });
-
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
-        }
-    },
 };
 
 module.exports = salespersonController;
