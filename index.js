@@ -31,6 +31,7 @@ app.use(require("./routes/productRoutes"))
 app.use(require("./routes/invoiceRoutes"))
 app.use(require("./routes/branchRoutes"))
 app.use(require("./routes/salespersonRoutes"))
+app.use(require("./routes/doctorRoutes"))
 app.use(require("./routes/audiometryRoutes"))
 
 app.post('/custom-script', checkJwt, async (req, res) => {
