@@ -8,5 +8,6 @@ const doctorRoutes = express.Router();
 
 doctorRoutes.post('/get-doctor-list', checkJwt, doctorController.getDoctorList);
 doctorRoutes.post('/save-doctor', upload.single("doctor_signature_file"), checkJwt, doctorController.saveDoctor);
+doctorRoutes.post('/get-doctor-signature', checkJwt, doctorController.getDoctorSignature);
 
 module.exports = doctorRoutes;

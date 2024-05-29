@@ -23,6 +23,17 @@ const doctorController = {
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
         }
     },
+
+    getDoctorSignature: async (req, res) => {
+        try {
+            let p_data = await Doctor.get_doctor_signature(req.body.doctor_id)
+
+            res.status(200).json({ operation: "success", message: "Doctor signature fetched successfully", info: p_data });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
 };
 
 module.exports = doctorController;
