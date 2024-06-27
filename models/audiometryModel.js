@@ -26,6 +26,7 @@ class Audiometry {
 
             patient_name: body_data.patient_name,
             contact_number: body_data.contact_number,
+            date: new Date(body_data.date),
             age: body_data.age,
             sex: body_data.sex,
             patient_address: body_data.patient_address,
@@ -67,6 +68,7 @@ class Audiometry {
         await admin.firestore().collection('audiometry').doc(body_data.audiometry_report_id).update({
             patient_name: body_data.patient_name,
             contact_number: body_data.contact_number,
+            date: new Date(body_data.date),
             age: body_data.age,
             sex: body_data.sex,
             patient_address: body_data.patient_address,
