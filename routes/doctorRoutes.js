@@ -6,8 +6,8 @@ const doctorController = require('../controllers/doctorController');
 const upload = multer()
 const doctorRoutes = express.Router();
 
-doctorRoutes.post('/get-doctor-list', checkJwt, doctorController.getDoctorList);
-doctorRoutes.post('/save-doctor', upload.single("doctor_signature_file"), checkJwt, doctorController.saveDoctor);
-doctorRoutes.post('/get-doctor-signature', checkJwt, doctorController.getDoctorSignature);
+doctorRoutes.post('/get-doctor-list', checkJwt(["audiometry"]), doctorController.getDoctorList);
+doctorRoutes.post('/save-doctor', upload.single("doctor_signature_file"), checkJwt(["admin_panel"]), doctorController.saveDoctor);
+doctorRoutes.post('/get-doctor-signature', checkJwt(["audiometry"]), doctorController.getDoctorSignature);
 
 module.exports = doctorRoutes;

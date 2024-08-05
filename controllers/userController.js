@@ -17,11 +17,43 @@ const userController = {
         }
     },
 
-    getAuthenticatedUserList: async (req, res) => {
+    getUserDetails: async (req, res) => {
         try {
-            let p_data = await User.get_authenticated_user_list()
+            let t = await User.get(req.body.user_uid)
+            if(t){
+                res.status(200).json({ operation: "success", message: "get user success", info: t });
+            }
+            else{
+                res.status(200).json({ operation: "failed", message: "no such user" });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
 
-            res.status(200).json({ operation: "success", message: "Auth Users list fetched successfully", info: p_data });
+    getUserList: async (req, res) => {
+        try {
+            let p_data = await User.get_user_list()
+
+            res.status(200).json({ operation: "success", message: "User list fetched successfully", info: p_data });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
+    updateUserAccess: async (req, res) => {
+        try {
+            let t = await User.get(req.body.user_id)
+            if (!t) {
+                return res.status(200).json({ operation: "failed", message: "No such User exists" });
+            }
+
+            await User.update_user_access(req.body)
+
+            return res.status(200).json({ operation: "success", message: "User access updated successfully" });
+
         } catch (error) {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });

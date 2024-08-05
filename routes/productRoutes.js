@@ -6,10 +6,10 @@ const productController = require('../controllers/productController');
 const upload = multer()
 const productRoutes = express.Router();
 
-productRoutes.post('/get-product-list', checkJwt, productController.getProductList);
-productRoutes.post('/add-product', checkJwt, productController.addProduct);
-productRoutes.post('/import-products', upload.single("selected_file"), checkJwt, productController.importProducts);
-productRoutes.post('/transfer-product', checkJwt, productController.transferProduct);
-productRoutes.post('/return-product', checkJwt, productController.returnProduct);
+productRoutes.post('/get-product-list', checkJwt(["generate_invoice", "inventory"]), productController.getProductList);
+productRoutes.post('/add-product', checkJwt(["inventory"]), productController.addProduct);
+productRoutes.post('/import-products', upload.single("selected_file"), checkJwt(["inventory"]), productController.importProducts);
+productRoutes.post('/transfer-product', checkJwt(["inventory"]), productController.transferProduct);
+productRoutes.post('/return-product', checkJwt(["inventory"]), productController.returnProduct);
 
 module.exports = productRoutes;

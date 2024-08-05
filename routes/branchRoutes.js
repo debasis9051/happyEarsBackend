@@ -4,7 +4,7 @@ const checkJwt= require('../checkJwt');
 
 const branchRoutes = express.Router();
 
-branchRoutes.post('/get-branch-list', checkJwt, branchController.getBranchList);
-branchRoutes.post('/save-branch', checkJwt, branchController.saveBranch);
+branchRoutes.post('/get-branch-list', checkJwt(["generate_invoice","inventory","sales_report"]), branchController.getBranchList);
+branchRoutes.post('/save-branch', checkJwt(["admin_panel"]), branchController.saveBranch);
 
 module.exports = branchRoutes;
