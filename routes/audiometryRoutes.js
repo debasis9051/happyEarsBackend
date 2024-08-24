@@ -5,6 +5,7 @@ const checkJwt= require('../checkJwt');
 const audiometryRoutes = express.Router();
 
 audiometryRoutes.post('/get-audiometry-list', checkJwt(["audiometry"]), audiometryController.getAudiometryList);
+audiometryRoutes.post('/get-audiometry-report-by-id', checkJwt(["generate_invoice"]), audiometryController.getAudiometryReportById);
 audiometryRoutes.post('/save-audiometry-report', checkJwt(["audiometry"]), audiometryController.saveAudiometryReport);
 audiometryRoutes.post('/update-audiometry-report', checkJwt(["audiometry"]), audiometryController.updateAudiometryReport);
 

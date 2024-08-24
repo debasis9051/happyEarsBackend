@@ -12,6 +12,22 @@ const audiometryController = {
         }
     },
 
+    getAudiometryReportById: async (req, res) => {
+        try {
+            let p_data = await Audiometry.get_audiometry_report_by_audiometry_report_id(req.body.audiometry_report_id)
+
+            if(p_data){
+                res.status(200).json({ operation: "success", message: "Audiometry Report by ID fetched successfully", info: p_data });
+            }
+            else{
+                res.status(200).json({ operation: "failed", message: "No such Audiometry Report" });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
     saveAudiometryReport: async (req, res) => {
         try {
             await Audiometry.add_audiometry_report(req.body.current_user_uid, req.body.current_user_name, req.body)
