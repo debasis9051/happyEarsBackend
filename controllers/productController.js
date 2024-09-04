@@ -1,6 +1,7 @@
 const XLSX = require("xlsx")
 const Product = require('../models/productModel')
 const Branch = require('../models/branchModel')
+const moment = require("moment")
 
 const productController = {
     getProductList: async (req, res) => {
@@ -148,6 +149,19 @@ const productController = {
 
             return res.status(200).json({ operation: "success", message: "Product transferred successfully" });
 
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
+    getProductLogHistory: async (req, res) => {
+        try {
+            let p_data = await Product.get_product_logs_by_id(req.body.product_id)
+
+            p_data = p_data.sort((a,b)=>moment.unix(a.created_at._seconds) - moment.unix(b.created_at._seconds))
+
+            res.status(200).json({ operation: "success", message: "Product log history fetched successfully", info: p_data });
         } catch (error) {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });

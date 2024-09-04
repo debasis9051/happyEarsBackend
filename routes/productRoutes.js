@@ -11,5 +11,6 @@ productRoutes.post('/add-product', checkJwt(["inventory"]), productController.ad
 productRoutes.post('/import-products', upload.single("selected_file"), checkJwt(["inventory"]), productController.importProducts);
 productRoutes.post('/transfer-product', checkJwt(["inventory"]), productController.transferProduct);
 productRoutes.post('/return-product', checkJwt(["inventory"]), productController.returnProduct);
+productRoutes.post('/get-product-log-history', checkJwt(["inventory"]), productController.getProductLogHistory);
 
 module.exports = productRoutes;

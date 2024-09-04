@@ -1,7 +1,5 @@
 const admin = require("../firebaseAdmin")
 
-const moment = require("moment")
-
 class Salesperson {
 
     static async get_salesperson_list() {

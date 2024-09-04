@@ -136,9 +136,10 @@ class Product {
         return qs.docs.map(doc => doc.data())
     }
 
+    
     static async are_serials_in_stock(serial_array) {
         console.log("are serials in stock")
-
+        
         let p_arr = [];
         for (let k = 0; k < serial_array.length; k += 30) {
             p_arr.push(new Promise(async (res) => {
@@ -149,16 +150,24 @@ class Product {
             }))
         }
         let t = await Promise.all(p_arr)
-
+        
         return t.flat()
     }
-
+    
     static async get_product_list() {
         // console.log("getting product list")
-
+        
         let q = admin.firestore().collection('products').orderBy("product_name")
         let qs = await q.get()
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+    }
+
+    static async get_product_logs_by_id(product_id) {
+        console.log("getting product logs by id")
+    
+        let q = admin.firestore().collection('product_logs').where("product_id", "==", product_id)
+        let qs = await q.get()
+        return qs.docs.map(doc => doc.data())
     }
 }
 
