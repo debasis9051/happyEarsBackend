@@ -8,6 +8,7 @@ const productRoutes = express.Router();
 
 productRoutes.post('/get-product-list', checkJwt(["generate_invoice", "inventory"]), productController.getProductList);
 productRoutes.post('/add-product', checkJwt(["inventory"]), productController.addProduct);
+productRoutes.post('/update-product', checkJwt(["inventory"]), productController.updateProduct);
 productRoutes.post('/import-products', upload.single("selected_file"), checkJwt(["inventory"]), productController.importProducts);
 productRoutes.post('/transfer-product', checkJwt(["inventory"]), productController.transferProduct);
 productRoutes.post('/return-product', checkJwt(["inventory"]), productController.returnProduct);

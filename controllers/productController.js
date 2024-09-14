@@ -42,6 +42,25 @@ const productController = {
         }
     },
 
+    updateProduct: async (req, res) => {
+        try {
+            let t1 = await Product.are_serials_in_stock([req.body.serial_number])
+            t1 = t1.filter(x=>x.id !== req.body.product_id)
+            
+            if (t1.length > 0) {
+                return res.status(200).json({ operation: "failed", message: `Product with Serial: ${req.body.serial_number} already exists in database` });
+            }
+
+            await Product.update_product_with_logs(req.body, req.body.current_user_uid, req.body.current_user_name)
+
+            return res.status(200).json({ operation: "success", message: "Product updated successfully" });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
     importProducts: async (req, res) => {
         try {
             let b_list = await Branch.get_branch_list()

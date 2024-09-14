@@ -128,6 +128,30 @@ class Product {
         await batch.commit()
     }
 
+    static async update_product_with_logs(bodyData, current_user_uid, current_user_name) {
+        console.log('updating product with logs')
+
+        await admin.firestore().collection('products').doc(bodyData.product_id).update({
+            product_name: bodyData.product_name,
+            manufacturer_name: bodyData.manufacturer,
+            mrp: bodyData.mrp,
+            serial_number: bodyData.serial_number,
+        });
+
+        await admin.firestore().collection('product_logs').add({
+            added_by_user_uid: current_user_uid,
+            added_by_user_name: current_user_name,
+            product_id: bodyData.product_id,
+            product_name: bodyData.product_name,
+            serial_number: bodyData.serial_number,
+            operation: "update",
+            reason: "product updated",
+            created_at: admin.firestore.FieldValue.serverTimestamp(),
+            branch_id: bodyData.branch_id
+        });
+    }
+
+
     static async get_product_by_name(product_name) {
         console.log("getting product by name")
 
@@ -136,27 +160,26 @@ class Product {
         return qs.docs.map(doc => doc.data())
     }
 
-    
     static async are_serials_in_stock(serial_array) {
         console.log("are serials in stock")
-        
+
         let p_arr = [];
         for (let k = 0; k < serial_array.length; k += 30) {
             p_arr.push(new Promise(async (res) => {
                 let seg = serial_array.slice(k, k + 30)
                 let q = admin.firestore().collection('products').where("serial_number", "in", seg)
                 let qs = await q.get()
-                res(qs.docs.map(doc => doc.data()))
+                res(qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) })))
             }))
         }
         let t = await Promise.all(p_arr)
-        
+
         return t.flat()
     }
-    
+
     static async get_product_list() {
         // console.log("getting product list")
-        
+
         let q = admin.firestore().collection('products').orderBy("product_name")
         let qs = await q.get()
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
@@ -164,7 +187,7 @@ class Product {
 
     static async get_product_logs_by_id(product_id) {
         console.log("getting product logs by id")
-    
+
         let q = admin.firestore().collection('product_logs').where("product_id", "==", product_id)
         let qs = await q.get()
         return qs.docs.map(doc => doc.data())
