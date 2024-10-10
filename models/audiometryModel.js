@@ -24,6 +24,7 @@ class Audiometry {
         let audiometry_report_ref = await admin.firestore().collection('audiometry').add({
             trial_mode: body_data.trial_mode,
 
+            branch_id: body_data.branch_id,
             patient_name: body_data.patient_name,
             contact_number: body_data.contact_number,
             date: new Date(body_data.date),
