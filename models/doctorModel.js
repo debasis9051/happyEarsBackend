@@ -11,12 +11,12 @@ class Doctor {
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
 
-    static async get_doctor_signature(doctor_id) {
+    static async get_doctor_details(doctor_id) {
         // console.log("getting doctor signature")
 
         let q = admin.firestore().collection('doctors').doc(doctor_id)
         let doc = await q.get()
-        return (doc.data()).doctor_signature
+        return doc.data()
     }
 
     static async add_doctor(current_user_uid, current_user_name, body_data, file_data) {
@@ -32,6 +32,7 @@ class Doctor {
 
         let doctor_ref = await admin.firestore().collection('doctors').add({
             doctor_name: body_data.doctor_name,
+            doctor_qualification: body_data.doctor_qualification,
             doctor_registration_number: body_data.doctor_registration_number,
             doctor_signature: downloadUrl, 
 
