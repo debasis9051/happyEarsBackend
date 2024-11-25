@@ -12,16 +12,45 @@ const patientController = {
         }
     },
 
+    getPatientNumber: async (req, res) => {
+        try {
+            let c = await Patient.get_patient_count()
+            let t = "PAT" + (c + 1).toString().padStart(3, 0)
+
+            res.status(200).json({ operation: "success", message: "Patient number fetched successfully", info: t });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
+    getPatientDetailsById: async (req, res) => {
+        try {
+            let p_data = await Patient.get_patient_by_patient_id(req.body.patient_id)
+
+            res.status(200).json({ operation: "success", message: "Patient number fetched successfully", info: p_data });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
     configurePatient: async (req, res) => {
         try {
-            if(req.body.patient_id){
-                await Patient.update_patient(req.body)
-            }
-            else{
-                await Patient.add_patient(req.body.current_user_uid, req.body.current_user_name, req.body)
+            let t = await Patient.get_patient_by_patient_number(req.body.patient_number)
+            if (t.length > 0 && (!req.body.patient_id || t[0].id != req.body.patient_id)) {
+                return res.status(200).json({ operation: "failed", message: "Patient against given Patient Number already exists" });
             }
 
-            return res.status(200).json({ operation: "success", message: `Patient ${req.body.patient_id?"updated":"added"} successfully` });
+            let patientRef
+            if (req.body.patient_id) {
+                await Patient.update_patient(req.body)
+            }
+            else {
+                patientRef = await Patient.add_patient(req.body.current_user_uid, req.body.current_user_name, req.body)
+            }
+
+            return res.status(200).json({ operation: "success", message: `Patient ${req.body.patient_id ? "updated" : "added"} successfully`, info: {patient_name: req.body.patient_name, patient_id: req.body.patient_id || patientRef.id} });
 
         } catch (error) {
             console.error(error);

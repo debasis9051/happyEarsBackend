@@ -4,7 +4,9 @@ const checkJwt = require('../checkJwt');
 
 const patientRoutes = express.Router();
 
-patientRoutes.post('/get-patient-list', checkJwt(["patients"]), patientController.getPatientList);
+patientRoutes.post('/get-patient-list', checkJwt(["audiometry","patients"]), patientController.getPatientList);
+patientRoutes.post('/get-patient-number', checkJwt(["patients"]), patientController.getPatientNumber);
+patientRoutes.post('/get-patient-details-by-id', checkJwt([]), patientController.getPatientDetailsById);
 patientRoutes.post('/configure-patient', checkJwt(["patients"]), patientController.configurePatient);
 
 module.exports = patientRoutes;

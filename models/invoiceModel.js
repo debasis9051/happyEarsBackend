@@ -45,12 +45,10 @@ class Invoice {
         console.log('adding invoice')
 
         let invoice_ref = await admin.firestore().collection('invoices').add({
-            patient_name: body_data.patient_name,
-            patient_address: body_data.patient_address,
-            contact_number: body_data.contact_number,
             branch_id: body_data.branch_id,
-            invoice_number: body_data.invoice_number,
             date: new Date(body_data.date),
+            patient_id: body_data.patient_id,
+            invoice_number: body_data.invoice_number,
             mode_of_payment: body_data.mode_of_payment,
             salesperson_id: body_data.salesperson_id,
             discount_amount: body_data.discount_amount,
@@ -69,9 +67,6 @@ class Invoice {
         console.log('updating invoice')
 
         await admin.firestore().collection('invoices').doc(body_data.invoice_id).update({
-            patient_name: body_data.patient_name,
-            patient_address: body_data.patient_address,
-            contact_number: body_data.contact_number,
             date: new Date(body_data.date),
             mode_of_payment: body_data.mode_of_payment,
             salesperson_id: body_data.salesperson_id,

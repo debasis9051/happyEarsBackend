@@ -5,7 +5,7 @@ class Audiometry {
     static async get_audiometry_list() {
         // console.log("getting audiometry list")
 
-        let q = admin.firestore().collection('audiometry').orderBy("patient_name")
+        let q = admin.firestore().collection('audiometry').orderBy("date","desc")
         let qs = await q.get()
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
@@ -25,12 +25,9 @@ class Audiometry {
             trial_mode: body_data.trial_mode,
 
             branch_id: body_data.branch_id,
-            patient_name: body_data.patient_name,
-            contact_number: body_data.contact_number,
             date: new Date(body_data.date),
-            age: body_data.age,
-            sex: body_data.sex,
-            patient_address: body_data.patient_address,
+
+            patient_id: body_data.patient_id,
 
             recommended_machine: body_data.recommended_machine,
             client_chosen_machine: body_data.client_chosen_machine,
@@ -67,12 +64,7 @@ class Audiometry {
         console.log('updating audiometry report')
 
         await admin.firestore().collection('audiometry').doc(body_data.audiometry_report_id).update({
-            patient_name: body_data.patient_name,
-            contact_number: body_data.contact_number,
             date: new Date(body_data.date),
-            age: body_data.age,
-            sex: body_data.sex,
-            patient_address: body_data.patient_address,
 
             recommended_machine: body_data.recommended_machine,
             client_chosen_machine: body_data.client_chosen_machine,

@@ -2,7 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config()
 const cors = require('cors');
-const checkJwt= require('./checkJwt');
+const checkJwt = require('./checkJwt');
+const admin = require("./firebaseAdmin")
 
 const app = express();
 const port = process.env.port || 4001;
@@ -35,68 +36,83 @@ app.use(require("./routes/doctorRoutes"))
 app.use(require("./routes/audiometryRoutes"))
 app.use(require("./routes/patientRoutes"))
 
-app.post('/custom-script', checkJwt, async (req, res) => {
+app.post('/custom-script', checkJwt(["admin_panel"]), async (req, res) => {
     try {
-        console.log('custom script')
+        console.log('custom script started by: ', req.body.current_user_name, req.body.current_user_uid)
 
-        /////////////////////////////////// Duplicate product and logs remove////////////////////////////
-        // let qs1 = await admin.firestore().collection('products').orderBy("product_name").get()
-        // let full_product_list = qs1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
-        // let qs2 = await admin.firestore().collection('product_logs').orderBy("product_name").get()
-        // let full_product_logs_list = qs2.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
-
-        // let t1 = full_product_list.map(x => x.serial_number) // full product list with dulicates
-        // let t2 = Array.from(new Set(full_product_list.map(x => x.serial_number))) // full product list without duplicates
-        // let t3 = t1.filter((x, i) => t1.indexOf(x) !== i)
-
-        // console.log("duplicates", t3.length, t3)
-
-        // const batch = admin.firestore().batch()
-        // t3.forEach(x => {
-        //     let dps = full_product_list.filter(y => y.serial_number === x)
-
-        //     let delete_doc = dps.find(y => y.instock === true)
-        //     console.log(dps.map(y => ({ id: y.id, product_name: y.product_name, serial_number: y.serial_number, instock: y.instock })), delete_doc.id)
-
-        //     let delete_doc_logs = full_product_logs_list.filter(y=>y.product_id === delete_doc.id)
-        //     console.log(delete_doc_logs)
-
-        //     // const pdocRef = admin.firestore().collection('products').doc(delete_doc.id);
-        //     // batch.delete(pdocRef)
-            
-        //     // delete_doc_logs.forEach(y=>{
-        //     //     const pldocRef = admin.firestore().collection('product_logs').doc(y.id);
-        //     //     batch.delete(pldocRef)
-        //     // })
-        // })
-        // await batch.commit()
-
-
-
-        //////////////////////////////////////Invoice number update/////////////////////////////////////
-        // let qs1 = await admin.firestore().collection('invoices').orderBy("invoice_number").get()
-        // let full_invoice_list = qs1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
-
-        // let t1 = full_invoice_list.filter(x => !/(?:[^\/]*\/){4}[^\/]*/gm.test(x.invoice_number))
-
-        // const batch = admin.firestore().batch()
-
-        // t1.forEach(inv_doc => {
-            
-            // let new_inv_no = inv_doc.invoice_number.split("/")
-            // new_inv_no.splice(1,0,moment.unix(inv_doc.date._seconds).format("YY"))
-            // new_inv_no = new_inv_no.join("/")
-
-            // console.log(inv_doc.invoice_number, new_inv_no)
-
-            // const idocRef = admin.firestore().collection('invoices').doc(inv_doc.id);
-            // batch.update(idocRef, { invoice_number: new_inv_no });
-        // })
-
-        // await batch.commit()
-    
-    
+        return res.status(200).json({ operation: "success", message: "Script executed successfully" });
         
+        // let q1 = await admin.firestore().collection('invoices').get()
+        // let full_invoice_list = q1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+
+        // let q2 = await admin.firestore().collection('patients').get()
+        // let full_patients_list = q2.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+        
+        // let curr_pat_count = full_patients_list.length
+        
+        // let t1 = full_invoice_list.filter(x => !x.hasOwnProperty("patient_id"))
+        
+
+        // const patBatch = admin.firestore().batch()
+        // const invBatch = admin.firestore().batch()
+
+        // t1.forEach((doc) => {
+        //     let tp = full_patients_list.find(x => x.patient_name.toLowerCase() === doc.patient_name.toLowerCase())
+
+        //     let patid = ""
+        //     if (tp) {
+        //         //update patient details
+        //         console.log("updating patient: ", tp.patient_name);
+
+        //         const patDocRef = admin.firestore().collection('patients').doc(tp.id);
+        //         patBatch.update(patDocRef, {
+        //             contact_number: doc.contact_number,
+        //             patient_address: doc.patient_address,
+        //         });
+
+        //         patid = tp.id
+        //     }
+        //     else {
+        //         //add new patient details
+        //         curr_pat_count += 1
+        //         let new_pat_no = "PAT" + (curr_pat_count).toString().padStart(3, 0)
+
+        //         console.log("adding patient: ", doc.patient_name, new_pat_no);
+
+        //         const patDocRef = admin.firestore().collection('patients').doc();
+        //         patBatch.set(patDocRef, {
+        //             patient_name: doc.patient_name,
+        //             contact_number: doc.contact_number,
+        //             patient_number: new_pat_no,
+        //             age: 0,
+        //             sex: "others",
+        //             patient_address: doc.patient_address,
+        //             notes: "",
+        //             map_coordinates: { latitude: "", longitude: "" },
+
+        //             created_at: admin.firestore.FieldValue.serverTimestamp(),
+        //             added_by_user_uid: req.body.current_user_uid,
+        //             added_by_user_name: req.body.current_user_name,
+        //         });
+
+        //         patid = patDocRef.id
+        //     }
+            
+        //     const docRef = admin.firestore().collection('invoices').doc(doc.id);
+        //     invBatch.update(docRef, {
+        //         contact_number: admin.firestore.FieldValue.delete(),
+        //         patient_address: admin.firestore.FieldValue.delete(),
+        //         patient_name: admin.firestore.FieldValue.delete(),
+
+        //         patient_id: patid
+        //     });
+        // })
+
+        // await patBatch.commit()
+        // await invBatch.commit()
+
+
+
 
         return res.status(200).json({ operation: "success", message: "Script executed successfully" });
 
