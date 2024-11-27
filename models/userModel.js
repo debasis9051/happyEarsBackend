@@ -44,7 +44,7 @@ class User {
     }
 
     static async update_user_access(body_data) {
-        console.log('updating user access')
+        console.log('updating user access triggered by',body_data.current_user_name, body_data.current_user_uid)
 
         await admin.firestore().collection('users').doc(body_data.user_id).update({
             auth_access: body_data.user_access
