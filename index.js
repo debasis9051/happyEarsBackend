@@ -40,78 +40,28 @@ app.post('/custom-script', checkJwt(["admin_panel"]), async (req, res) => {
     try {
         console.log('custom script started by: ', req.body.current_user_name, req.body.current_user_uid)
 
-        return res.status(200).json({ operation: "success", message: "Script executed successfully" });
-        
-        // let q1 = await admin.firestore().collection('invoices').get()
-        // let full_invoice_list = q1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+        // return res.status(200).json({ operation: "success", message: "Script executed successfully" });
 
-        // let q2 = await admin.firestore().collection('patients').get()
-        // let full_patients_list = q2.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
-        
-        // let curr_pat_count = full_patients_list.length
-        
-        // let t1 = full_invoice_list.filter(x => !x.hasOwnProperty("patient_id"))
-        
+        // let q1 = await admin.firestore().collection('patients').get()
+        // let full_patients_list = q1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
 
         // const patBatch = admin.firestore().batch()
-        // const invBatch = admin.firestore().batch()
 
-        // t1.forEach((doc) => {
-        //     let tp = full_patients_list.find(x => x.patient_name.toLowerCase() === doc.patient_name.toLowerCase())
+        // full_patients_list = full_patients_list.sort((a,b)=>{
+        //     return a.patient_number - b.patient_number
+        // })
 
-        //     let patid = ""
-        //     if (tp) {
-        //         //update patient details
-        //         console.log("updating patient: ", tp.patient_name);
+        // full_patients_list.forEach((doc) => {
 
-        //         const patDocRef = admin.firestore().collection('patients').doc(tp.id);
-        //         patBatch.update(patDocRef, {
-        //             contact_number: doc.contact_number,
-        //             patient_address: doc.patient_address,
-        //         });
-
-        //         patid = tp.id
-        //     }
-        //     else {
-        //         //add new patient details
-        //         curr_pat_count += 1
-        //         let new_pat_no = "PAT" + (curr_pat_count).toString().padStart(3, 0)
-
-        //         console.log("adding patient: ", doc.patient_name, new_pat_no);
-
-        //         const patDocRef = admin.firestore().collection('patients').doc();
-        //         patBatch.set(patDocRef, {
-        //             patient_name: doc.patient_name,
-        //             contact_number: doc.contact_number,
-        //             patient_number: new_pat_no,
-        //             age: 0,
-        //             sex: "others",
-        //             patient_address: doc.patient_address,
-        //             notes: "",
-        //             map_coordinates: { latitude: "", longitude: "" },
-
-        //             created_at: admin.firestore.FieldValue.serverTimestamp(),
-        //             added_by_user_uid: req.body.current_user_uid,
-        //             added_by_user_name: req.body.current_user_name,
-        //         });
-
-        //         patid = patDocRef.id
-        //     }
+        //     const numericPart = parseInt(doc.patient_number.replace("PAT", ""));
             
-        //     const docRef = admin.firestore().collection('invoices').doc(doc.id);
-        //     invBatch.update(docRef, {
-        //         contact_number: admin.firestore.FieldValue.delete(),
-        //         patient_address: admin.firestore.FieldValue.delete(),
-        //         patient_name: admin.firestore.FieldValue.delete(),
-
-        //         patient_id: patid
+        //     const patDocRef = admin.firestore().collection('patients').doc(doc.id);
+        //     patBatch.update(patDocRef, {
+        //         patient_number: numericPart,
         //     });
         // })
 
         // await patBatch.commit()
-        // await invBatch.commit()
-
-
 
 
         return res.status(200).json({ operation: "success", message: "Script executed successfully" });

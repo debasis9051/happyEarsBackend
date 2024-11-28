@@ -18,6 +18,14 @@ class Patient {
         return qs.data().count
     }
 
+    static async get_max_patient_number() {
+        // console.log("get max patient number")
+
+        let q = admin.firestore().collection("patients").orderBy("patient_number","desc").limit(1)
+        let qs = await q.get()
+        return qs.docs[0].data().patient_number
+    }
+
     static async get_patient_by_patient_number(patient_number) {
         console.log("getting patient by patient number")
 

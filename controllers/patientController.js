@@ -14,10 +14,9 @@ const patientController = {
 
     getPatientNumber: async (req, res) => {
         try {
-            let c = await Patient.get_patient_count()
-            let t = "PAT" + (c + 1).toString().padStart(3, 0)
+            let c = await Patient.get_max_patient_number()
 
-            res.status(200).json({ operation: "success", message: "Patient number fetched successfully", info: t });
+            res.status(200).json({ operation: "success", message: "Patient number fetched successfully", info: c + 1 });
         } catch (error) {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
@@ -50,7 +49,7 @@ const patientController = {
                 patientRef = await Patient.add_patient(req.body.current_user_uid, req.body.current_user_name, req.body)
             }
 
-            return res.status(200).json({ operation: "success", message: `Patient ${req.body.patient_id ? "updated" : "added"} successfully`, info: {patient_name: req.body.patient_name, patient_id: req.body.patient_id || patientRef.id} });
+            return res.status(200).json({ operation: "success", message: `Patient ${req.body.patient_id ? "updated" : "added"} successfully`, info: { patient_name: req.body.patient_name, patient_id: req.body.patient_id || patientRef.id } });
 
         } catch (error) {
             console.error(error);
