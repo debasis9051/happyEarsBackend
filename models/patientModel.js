@@ -5,7 +5,7 @@ class Patient {
     static async get_patient_list() {
         // console.log("getting patient list")
 
-        let q = admin.firestore().collection('patients').orderBy("patient_number")
+        let q = admin.firestore().collection('patients').orderBy("created_at","desc")
         let qs = await q.get()
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
