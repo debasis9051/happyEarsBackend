@@ -5,7 +5,7 @@ class Patient {
     static async get_patient_list() {
         // console.log("getting patient list")
 
-        let q = admin.firestore().collection('patients').orderBy("created_at","desc")
+        let q = admin.firestore().collection('patients').orderBy("created_at", "desc")
         let qs = await q.get()
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
@@ -21,7 +21,7 @@ class Patient {
     static async get_max_patient_number() {
         // console.log("get max patient number")
 
-        let q = admin.firestore().collection("patients").orderBy("patient_number","desc").limit(1)
+        let q = admin.firestore().collection("patients").orderBy("patient_number", "desc").limit(1)
         let qs = await q.get()
         return qs.docs[0].data().patient_number
     }
@@ -40,6 +40,22 @@ class Patient {
         let q = admin.firestore().collection('patients').doc(patient_id)
         let doc = await q.get()
         return doc.data()
+    }
+
+    static async get_patient_docs_by_patient_id(patient_id) {
+        console.log("getting patient by patient id")
+
+        let q1 = admin.firestore().collection('audiometry').where("patient_id", "==", patient_id)
+        let audiometry_qs = await q1.get()
+        let audiometry_docs = audiometry_qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+        
+        let q2 = admin.firestore().collection('invoices').where("patient_id", "==", patient_id)
+        let invoice_qs = await q2.get()
+        let invoice_docs = invoice_qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+
+        // console.log(audiometry_docs, invoice_docs);
+        
+        return {audiometry: audiometry_docs, invoices: invoice_docs}
     }
 
     static async add_patient(current_user_uid, current_user_name, body_data) {

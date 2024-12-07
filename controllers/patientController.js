@@ -27,7 +27,18 @@ const patientController = {
         try {
             let p_data = await Patient.get_patient_by_patient_id(req.body.patient_id)
 
-            res.status(200).json({ operation: "success", message: "Patient number fetched successfully", info: p_data });
+            res.status(200).json({ operation: "success", message: "Patient details fetched successfully", info: p_data });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
+    getPatientDocsById: async (req, res) => {
+        try {
+            let p_data = await Patient.get_patient_docs_by_patient_id(req.body.patient_id)
+
+            res.status(200).json({ operation: "success", message: "Patient associated docs fetched successfully", info: p_data });
         } catch (error) {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
