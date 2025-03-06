@@ -42,26 +42,20 @@ app.post('/custom-script', checkJwt(["admin_panel"]), async (req, res) => {
 
         // return res.status(200).json({ operation: "success", message: "Script executed successfully" });
 
-        // let q1 = await admin.firestore().collection('patients').get()
-        // let full_patients_list = q1.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+        // const collectionRef = admin.firestore().collection('product_logs');
 
-        // const patBatch = admin.firestore().batch()
-
-        // full_patients_list = full_patients_list.sort((a,b)=>{
-        //     return a.patient_number - b.patient_number
-        // })
-
-        // full_patients_list.forEach((doc) => {
-
-        //     const numericPart = parseInt(doc.patient_number.replace("PAT", ""));
-            
-        //     const patDocRef = admin.firestore().collection('patients').doc(doc.id);
-        //     patBatch.update(patDocRef, {
-        //         patient_number: numericPart,
-        //     });
-        // })
-
-        // await patBatch.commit()
+        // const docRef = collectionRef.doc();
+        // docRef.set({
+        //     added_by_user_name: 'Bhaswati Deb Bakshi',
+        //     added_by_user_uid: 'Uyq4btP1RVWTDb1nTtdvrCzcs913',
+        //     branch_id: 'fN4CFeQabs4gwCyPaZtd',
+        //     created_at: new Date(),
+        //     operation: 'invoiced',
+        //     product_id: 'hOccVFOP24bdkvLJCGtB',
+        //     product_name: 'KEY 188',
+        //     reason: 'product invoiced',
+        //     serial_number: '2466178730',
+        // });
 
 
         return res.status(200).json({ operation: "success", message: "Script executed successfully" });
