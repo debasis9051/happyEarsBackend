@@ -35,6 +35,7 @@ app.use(require("./routes/salespersonRoutes"))
 app.use(require("./routes/doctorRoutes"))
 app.use(require("./routes/audiometryRoutes"))
 app.use(require("./routes/patientRoutes"))
+app.use(require("./routes/serviceRoutes"))
 
 app.post('/custom-script', checkJwt(["admin_panel"]), async (req, res) => {
     try {
