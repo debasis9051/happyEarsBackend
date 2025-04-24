@@ -10,6 +10,14 @@ class Service {
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
 
+    static async get_patient_service_request_history_by_id(patient_id) {
+        // console.log("getting service request history by id")
+
+        let q = admin.firestore().collection('service').where("patient_id", "==", patient_id)
+        let qs = await q.get()
+        return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
+    }
+
     static async create_service_request(current_user_uid, current_user_name, body_data) {
         console.log('creating service request')
 
