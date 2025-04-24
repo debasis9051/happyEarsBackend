@@ -14,7 +14,7 @@ class Service {
         console.log('creating service request')
 
         // Change this to be dependent on unix time so it is unique always
-        let service_id = Math.floor(1000000 + Math.random() * 9000000).toString();
+        let service_id = Date.now();
 
         let service_ref = await admin.firestore().collection('service').add({
             service_id: service_id,
