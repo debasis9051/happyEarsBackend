@@ -1,3 +1,4 @@
+const wrapStaticMethods = require("../wrapStaticMethods")
 const admin = require("../firebaseAdmin")
 
 class Patient {
@@ -95,4 +96,4 @@ class Patient {
     }
 }
 
-module.exports = Patient;
+module.exports = wrapStaticMethods(Patient);

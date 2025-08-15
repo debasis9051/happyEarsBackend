@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer')
-const checkJwt= require('../checkJwt');
+const checkJwt = require('../checkJwt');
 const doctorController = require('../controllers/doctorController');
 
 const upload = multer()

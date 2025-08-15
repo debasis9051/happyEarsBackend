@@ -20,11 +20,15 @@ const userController = {
     getUserDetails: async (req, res) => {
         try {
             let t = await User.get(req.body.user_uid)
+            
             if(t){
                 res.status(200).json({ operation: "success", message: "get user success", info: t });
             }
+            else if(t === null){
+                res.status(200).json({ operation: "success", message: "no such user" });
+            }
             else{
-                res.status(200).json({ operation: "failed", message: "no such user" });
+                res.status(200).json({ operation: "failed", message: 'Server is down currently, Try again Later' });
             }
         } catch (error) {
             console.error(error);

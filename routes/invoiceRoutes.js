@@ -1,5 +1,5 @@
 const express = require('express');
-const checkJwt= require('../checkJwt');
+const checkJwt = require('../checkJwt');
 const invoiceController = require('../controllers/invoiceController');
 
 const invoiceRoutes = express.Router();

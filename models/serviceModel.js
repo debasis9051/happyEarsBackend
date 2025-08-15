@@ -1,5 +1,6 @@
 const { getDownloadURL } = require("firebase-admin/storage")
 const admin = require("../firebaseAdmin")
+const wrapStaticMethods = require("../wrapStaticMethods")
 
 class Service {
     static async get_service_list() {
@@ -78,4 +79,4 @@ class Service {
 
 }
 
-module.exports = Service;
+module.exports = wrapStaticMethods(Service);

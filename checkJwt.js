@@ -18,4 +18,4 @@ const checkJwt = (pages) => {
     }
 }
 
-module.exports = checkJwt
+module.exports = checkJwt;

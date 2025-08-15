@@ -1,5 +1,6 @@
 const { getDownloadURL } = require("firebase-admin/storage")
 const admin = require("../firebaseAdmin")
+const wrapStaticMethods = require("../wrapStaticMethods")
 
 class Doctor {
 
@@ -45,4 +46,4 @@ class Doctor {
     }
 }
 
-module.exports = Doctor;
+module.exports = wrapStaticMethods(Doctor);

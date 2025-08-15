@@ -1,6 +1,6 @@
 const express = require('express');
 const branchController = require('../controllers/branchController');
-const checkJwt= require('../checkJwt');
+const checkJwt = require('../checkJwt');
 
 const branchRoutes = express.Router();
 

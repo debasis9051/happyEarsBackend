@@ -1,3 +1,4 @@
+const wrapStaticMethods = require("../wrapStaticMethods")
 const admin = require("../firebaseAdmin")
 
 class Audiometry {
@@ -91,4 +92,4 @@ class Audiometry {
     }
 }
 
-module.exports = Audiometry;
+module.exports = wrapStaticMethods(Audiometry);

@@ -1,6 +1,6 @@
 const express = require('express');
 const audiometryController = require('../controllers/audiometryController');
-const checkJwt= require('../checkJwt');
+const checkJwt = require('../checkJwt');
 
 const audiometryRoutes = express.Router();
 

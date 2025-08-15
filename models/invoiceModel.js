@@ -1,3 +1,4 @@
+const wrapStaticMethods = require("../wrapStaticMethods")
 const admin = require("../firebaseAdmin")
 
 const moment = require("moment")
@@ -76,4 +77,4 @@ class Invoice {
     }
 }
 
-module.exports = Invoice;
+module.exports = wrapStaticMethods(Invoice);

@@ -1,3 +1,4 @@
+const wrapStaticMethods = require("../wrapStaticMethods");
 const admin = require("../firebaseAdmin")
 
 class Product {
@@ -194,4 +195,4 @@ class Product {
     }
 }
 
-module.exports = Product;
+module.exports = wrapStaticMethods(Product);
