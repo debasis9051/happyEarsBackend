@@ -14,4 +14,6 @@ productRoutes.post('/transfer-product', checkJwt(["inventory"]), productControll
 productRoutes.post('/return-product', checkJwt(["inventory"]), productController.returnProduct);
 productRoutes.post('/get-product-log-history', checkJwt(["inventory"]), productController.getProductLogHistory);
 
+productRoutes.post('/products/:product_id', checkJwt(["inventory"]), productController.deleteProduct);
+
 module.exports = productRoutes;

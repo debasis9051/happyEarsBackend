@@ -129,6 +129,22 @@ class Product {
         await batch.commit()
     }
 
+    static async delete_product_and_logs_by_id(product_id) {
+        console.log('delete product and logs by id')
+
+        const batch = admin.firestore().batch()
+
+        const productLogs = await admin.firestore().collection('product_logs').where("product_id", "==", product_id).get();
+        productLogs.docs.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+
+        const productRef = admin.firestore().collection('products').doc(product_id)
+        batch.delete(productRef);
+
+        await batch.commit()
+    }
+
     static async update_product_with_logs(bodyData, current_user_uid, current_user_name) {
         console.log('updating product with logs')
 
@@ -150,6 +166,34 @@ class Product {
             created_at: admin.firestore.FieldValue.serverTimestamp(),
             branch_id: bodyData.branch_id
         });
+    }
+
+    static async restock_product_with_logs(product_id_list, current_user_uid, current_user_name) {
+        console.log('restock product with logs')
+
+        const batch = admin.firestore().batch()
+
+        await Promise.all(product_id_list.map(async (pid) => {
+            const docRef = admin.firestore().collection('products').doc(pid);
+            let productData = (await docRef.get()).data();
+
+            batch.update(docRef, { instock: true });
+
+            const docRef2 = admin.firestore().collection('product_logs').doc();
+            batch.set(docRef2, {
+                added_by_user_uid: current_user_uid,
+                added_by_user_name: current_user_name,
+                product_id: pid,
+                product_name: productData.product_name,
+                serial_number: productData.serial_number,
+                operation: "restock",
+                reason: "invoice deleted, product restocked",
+                created_at: admin.firestore.FieldValue.serverTimestamp(),
+                branch_id: productData.branch_id
+            });
+        }));
+
+        await batch.commit()
     }
 
 

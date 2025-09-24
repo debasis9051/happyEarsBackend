@@ -2,6 +2,7 @@ const moment = require("moment")
 const Invoice = require('../models/invoiceModel')
 const Product = require('../models/productModel')
 const Branch = require('../models/branchModel')
+const Patient = require('../models/patientModel')
 
 const invoiceController = {
     getInvoiceList: async (req, res) => {
@@ -14,13 +15,13 @@ const invoiceController = {
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
         }
     },
-    
+
     getInvoiceNumber: async (req, res) => {
         try {
             if (!moment(req.body.date).isValid()) {
                 return res.status(200).json({ operation: "failed", message: "Given date is Invalid " });
             }
-            
+
             let c = await Invoice.get_invoice_count_by_branch_id_and_date(req.body.branch_id, req.body.date)
             let b = await Branch.get_branch_invoice_code_by_id(req.body.branch_id)
             let t = moment(req.body.date).format("MMM/YY").toUpperCase() + "/HA/" + b + "/" + (c + 1)
@@ -40,8 +41,8 @@ const invoiceController = {
             }
 
             let t2 = await Product.are_serials_in_stock(req.body.line_items.map(x => x.serial_number))
-            if (t2.find(x=>!x.instock)) {
-                return res.status(200).json({ operation: "failed", message: `These serials are not in stock currently: ${t2.filter(x=>!x.instock).map(x=>x.serial_number).join(", ")}` });
+            if (t2.find(x => !x.instock)) {
+                return res.status(200).json({ operation: "failed", message: `These serials are not in stock currently: ${t2.filter(x => !x.instock).map(x => x.serial_number).join(", ")}` });
             }
 
             await Invoice.add_invoice(req.body.current_user_uid, req.body.current_user_name, req.body)
@@ -67,6 +68,39 @@ const invoiceController = {
 
             return res.status(200).json({ operation: "success", message: "Invoice updated successfully" });
 
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
+    deleteInvoice: async (req, res) => {
+        try {
+            let invoice_id = req.params.invoice_id
+            let invoice = await Invoice.get_invoice_by_invoice_id(invoice_id)
+
+            await Product.restock_product_with_logs(invoice.line_items.map(x => x.product_id), req.body.current_user_uid, req.body.current_user_name)
+
+            await Invoice.delete_invoice_by_id(invoice_id)
+
+            return res.status(200).json({ operation: "success", message: "Invoice deleted successfully and products restocked" });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
+    getProductAssociatedInvoice: async (req, res) => {
+        try {
+            let invoice = await Invoice.get_product_associated_invoice(req.params.product_id)    
+
+            if (invoice) {
+                let patient_details = await Patient.get_patient_by_patient_id(invoice.patient_id)
+                invoice.patient_details = patient_details
+            }
+
+            res.status(200).json({ operation: "success", message: "Product associated Invoice fetched successfully", info: invoice });
         } catch (error) {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });

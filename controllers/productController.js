@@ -174,6 +174,19 @@ const productController = {
         }
     },
 
+    deleteProduct: async (req, res) => {
+        try {
+            let product_id = req.params.product_id
+            await Product.delete_product_and_logs_by_id(product_id)
+
+            return res.status(200).json({ operation: "success", message: "Product deleted successfully" });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
+        }
+    },
+
     getProductLogHistory: async (req, res) => {
         try {
             let p_data = await Product.get_product_logs_by_id(req.body.product_id)

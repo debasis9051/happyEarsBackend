@@ -34,10 +34,18 @@ class Invoice {
         return qs.docs.map(doc => doc.data())
     }
 
+    static async get_invoice_by_product_id(product_id) {
+        console.log("getting invoice by product_id")
+
+        let q = admin.firestore().collection('invoices').where("list_items", "==", invoice_number)
+        let qs = await q.get()
+        return qs.docs.map(doc => doc.data())
+    }
+
     static async get_invoice_list() {
         // console.log("getting invoice list")
 
-        let q = admin.firestore().collection('invoices').orderBy("date","desc")
+        let q = admin.firestore().collection('invoices').orderBy("date", "desc")
         let qs = await q.get()
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
@@ -54,6 +62,7 @@ class Invoice {
             salesperson_id: body_data.salesperson_id,
             discount_amount: body_data.discount_amount,
             line_items: body_data.line_items,
+            product_ids: body_data.line_items.map(x => x.product_id),
             accessory_items: body_data.accessory_items,
 
             created_at: admin.firestore.FieldValue.serverTimestamp(),
@@ -74,6 +83,22 @@ class Invoice {
             discount_amount: body_data.discount_amount,
             accessory_items: body_data.accessory_items
         });
+    }
+
+    static async delete_invoice_by_id(invoice_id) {
+        console.log('delete invoice by id')
+
+        await admin.firestore().collection('invoices').doc(invoice_id).delete()
+    }
+
+    static async get_product_associated_invoice(product_id) {
+        console.log("getting product associated invoice")
+
+        let q = admin.firestore().collection('invoices').where("product_ids", "array-contains", product_id)
+        let qs = await q.get()
+        let results = qs.docs.map(doc => doc.data())
+        
+        return results.length > 0 ? results[0] : null
     }
 }
 
