@@ -1,6 +1,7 @@
 const { getDownloadURL } = require("firebase-admin/storage")
 const admin = require("../firebaseAdmin")
 const wrapStaticMethods = require("../wrapStaticMethods")
+const ExifParser = require("exif-parser")
 
 class Service {
     static async get_service_list() {
@@ -29,10 +30,11 @@ class Service {
             service_id: service_id,
             patient_id: body_data.patient_id,
             problem_description: body_data.problem_description,
-            outcome_details: null,
             technician: null,
+            service_type: null,
+            outcome_details: null,
             status: "PENDING",
-            file_reference: null,
+            file_references: null,
             closed_at: null,
             created_at: admin.firestore.FieldValue.serverTimestamp(),
             added_by_user_uid: current_user_uid,
@@ -42,41 +44,123 @@ class Service {
         return { service_ref, service_id }
     }
 
-    static async complete_service_request(body_data, file_data) {
-        console.log('completing service request')
+    static async complete_service_request(body_data, files_data) {
+        console.log('completing service request');
 
-        let filename = Date.now() + "_" + body_data.service_unique_id.replace(" ", "_").toLowerCase()
-        let ext = "." + file_data.originalname.split(".")[file_data.originalname.split(".").length - 1]
+        const fileInfos = await Promise.all(files_data.map(async (file) => {
+            // --- Sanitize original name ---
+            const sanitize = (name) => name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
 
-        let fileRef = admin.storage().bucket().file(`service_files/${filename + ext}`)
+            const ext = '.' + String(file.originalname).split('.').pop().toLowerCase();
+            const baseOriginal = sanitize(String(file.originalname).replace(/\.[^/.]+$/, ''));
 
-        await fileRef.save(file_data.buffer)
-        let downloadUrl = await getDownloadURL(fileRef)
+            // --- Generate unique filename ---
+            const uniqueId = crypto.randomUUID();
+            const filename = `${body_data.service_unique_id}_${uniqueId}_${baseOriginal}${ext}`;
 
-        let service_ref = await admin.firestore().collection('service').doc(body_data.service_unique_id).update({
-            status: "COMPLETED",
-            outcome_details: body_data.outcome_details,
-            technician: body_data.technician,
-            file_reference: downloadUrl,
-            closed_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
+            const storagePath = `service_files/${body_data.service_unique_id}/${filename}`;
+            const fileRef = admin.storage().bucket().file(storagePath);
+            await fileRef.save(file.buffer);
+            const downloadUrl = await getDownloadURL(fileRef);
 
-        return { service_ref }
+            // --- Extract EXIF timestamp if available ---
+            let takenAt = null;
+            try {
+                // Only attempt EXIF parsing for JPEG files
+                if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
+                    const parser = ExifParser.create(file.buffer);
+                    const exifData = parser.parse();
+
+                    if (exifData.tags?.DateTimeOriginal) {
+                        takenAt = new Date(exifData.tags.DateTimeOriginal * 1000).toISOString();
+                    }
+                } else {
+                    console.warn(`Skipping EXIF for ${file.originalname} (type: ${file.mimetype})`);
+                }
+            } catch (err) {
+                console.warn(`Failed to parse EXIF for ${file.originalname}:`, err.message);
+            }
+
+            return {
+                downloadUrl,
+                originalName: file.originalname,
+                size: file.size,
+                type: file.mimetype,
+                takenAt,
+                storagePath, // optional, but useful for cleanup/deletion
+            };
+        }));
+
+
+        // Update the service document in Firestore
+        const service_ref = await admin.firestore().collection('service')
+            .doc(body_data.service_unique_id)
+            .update({
+                status: "COMPLETED",
+                technician: body_data.technician,
+                service_type: body_data.service_type,
+                outcome_details: body_data.outcome_details,
+                file_references: fileInfos,
+                closed_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+        return { service_ref };
     }
 
-    static async cancel_service_request(body_data) {
+    static async cancel_service_request(body_data, file_data) {
         console.log('canceling service request')
+
+        // --- Sanitize original name ---
+        const sanitize = (name) => name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+
+        const ext = '.' + String(file_data.originalname).split('.').pop().toLowerCase();
+        const baseOriginal = sanitize(String(file_data.originalname).replace(/\.[^/.]+$/, ''));
+
+        // --- Generate unique filename ---
+        const uniqueId = crypto.randomUUID();
+        const filename = `${body_data.service_unique_id}_${uniqueId}_${baseOriginal}${ext}`;
+
+        const storagePath = `service_files/${body_data.service_unique_id}/${filename}`;
+        const fileRef = admin.storage().bucket().file(storagePath);
+        await fileRef.save(file_data.buffer);
+        const downloadUrl = await getDownloadURL(fileRef);
+
+        // --- Extract EXIF timestamp if available ---
+        let takenAt = null;
+        try {
+            // Only attempt EXIF parsing for JPEG files
+            if (file_data.mimetype === 'image/jpeg' || file_data.mimetype === 'image/jpg') {
+                const parser = ExifParser.create(file_data.buffer);
+                const exifData = parser.parse();
+
+                if (exifData.tags?.DateTimeOriginal) {
+                    takenAt = new Date(exifData.tags.DateTimeOriginal * 1000).toISOString();
+                }
+            } else {
+                console.warn(`Skipping EXIF for ${file_data.originalname} (type: ${file_data.mimetype})`);
+            }
+        } catch (err) {
+            console.warn(`Failed to parse EXIF for ${file_data.originalname}:`, err.message);
+        }
+
+        const fileInfo = {
+            downloadUrl,
+            originalName: file_data.originalname,
+            size: file_data.size,
+            type: file_data.mimetype,
+            takenAt,
+            storagePath, // optional, but useful for cleanup/deletion
+        };
 
         let service_ref = await admin.firestore().collection('service').doc(body_data.service_unique_id).update({
             status: "CANCELLED",
             outcome_details: body_data.outcome_details,
+            file_references: [fileInfo],
             closed_at: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         return { service_ref }
     }
-
-
 }
 
 module.exports = wrapStaticMethods(Service);

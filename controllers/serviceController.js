@@ -36,7 +36,7 @@ const serviceController = {
 
     completeServiceRequest: async (req, res) => {
         try {
-            await Service.complete_service_request(req.body, req.file)
+            await Service.complete_service_request(req.body, req.files)
 
             return res.status(200).json({ operation: "success", message: "Service Request completed successfully" });
         } catch (error) {
@@ -47,7 +47,7 @@ const serviceController = {
 
     cancelServiceRequest: async (req, res) => {
         try {
-            await Service.cancel_service_request(req.body)
+            await Service.cancel_service_request(req.body, req.file)
 
             return res.status(200).json({ operation: "success", message: "Service Request cancelled successfully" });
         } catch (error) {
