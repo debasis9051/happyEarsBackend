@@ -12,8 +12,8 @@ class Service {
         return qs.docs.map(doc => ({ id: doc.id, ...(doc.data()) }))
     }
 
-    static async get_patient_service_request_history_by_id(patient_id) {
-        // console.log("getting service request history by id")
+    static async get_patient_service_reports_by_id(patient_id) {
+        // console.log("getting service reports by id")
 
         let q = admin.firestore().collection('service').where("patient_id", "==", patient_id)
         let qs = await q.get()

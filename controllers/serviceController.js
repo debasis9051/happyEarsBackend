@@ -12,11 +12,11 @@ const serviceController = {
         }
     },
 
-    getPatientServiceRequestHistoryById: async (req, res) => {
+    getPatientServiceReportsById: async (req, res) => {
         try {
-            let p_data = await Service.get_patient_service_request_history_by_id(req.body.patient_id)
+            let p_data = await Service.get_patient_service_reports_by_id(req.body.patient_id)
 
-            res.status(200).json({ operation: "success", message: "Service Request History fetched successfully", info: p_data });
+            res.status(200).json({ operation: "success", message: "Service Reports fetched successfully", info: p_data });
         } catch (error) {
             console.error(error);
             res.status(500).json({ operation: "failed", message: 'Internal Server Error' });
