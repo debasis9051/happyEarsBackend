@@ -57,7 +57,7 @@ app.post('/custom-script', checkJwt(["admin_panel"]), async (req, res) => {
         // await batch.commit();
         // console.log('Script executed successfully: product_ids added to invoices');
 
-        // await backupAllCollections();
+        // await backupAllCollections();  
 
         return res.status(200).json({ operation: "success", message: "Script executed successfully" });
 
