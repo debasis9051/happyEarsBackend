@@ -1,3 +1,8 @@
+/**
+ * Branch routes
+ * POST /get-branch-list            — Requires generate_invoice, inventory, or sales_report access
+ * POST /save-branch                — Requires admin_panel access
+ */
 const express = require('express');
 const branchController = require('../controllers/branchController');
 const checkJwt = require('../checkJwt');

@@ -1,0 +1,195 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "invoices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branch_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "invoices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "added_by_user_uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "invoices",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "added_by_user_uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "products",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "instock",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "product_name",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "products",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branch_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "product_name",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "products",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branch_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "instock",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "product_name",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "service",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "patient_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date_of_service",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "service",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "added_by_user_uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "patients",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "added_by_user_uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "patients",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "added_by_user_uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "audiometry",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "added_by_user_uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "audiometry",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branch_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "audiometry",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "added_by_user_uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "branch_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
