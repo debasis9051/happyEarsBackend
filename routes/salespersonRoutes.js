@@ -1,3 +1,8 @@
+/**
+ * Salesperson routes
+ * POST /get-salesperson-list       — Requires generate_invoice or sales_report access
+ * POST /save-salesperson           — Requires admin_panel access
+ */
 const express = require('express');
 const salespersonController = require('../controllers/salespersonController');
 const checkJwt = require('../checkJwt');

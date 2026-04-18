@@ -1,3 +1,9 @@
+/**
+ * Doctor routes
+ * POST /get-doctor-list            — Requires audiometry access
+ * POST /save-doctor                — Requires admin_panel access; accepts multipart/form-data (signature image)
+ * POST /get-doctor-details         — Requires audiometry access
+ */
 const express = require('express');
 const multer = require('multer')
 const checkJwt = require('../checkJwt');
